@@ -1,0 +1,119 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>SCOUT Alert Preview</title>
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    background: #f5f5f5;
+                    padding: 20px;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 8px;
+                    overflow: hidden;
+                }
+                .header {
+                    background: #1A5276;
+                    color: white;
+                    padding: 40px;
+                    text-align: center;
+                }
+                .gradient-bar {
+                    height: 4px;
+                    background: linear-gradient(90deg, #6B8F71 0%, #F39C12 50%, #E74C3C 100%);
+                }
+                .content {
+                    padding: 40px;
+                }
+                .summary-boxes {
+                    display: flex;
+                    justify-content: space-around;
+                    margin: 30px 0;
+                }
+                .summary-box {
+                    text-align: center;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    flex: 1;
+                    margin: 0 10px;
+                }
+                .alert-item {
+                    background: white;
+                    border: 1px solid #e1e4e8;
+                    border-radius: 4px;
+                    padding: 15px;
+                    margin-bottom: 10px;
+                }
+                .critical { border-left: 3px solid #E74C3C; }
+                .warning { border-left: 3px solid #F39C12; }
+                .normal { border-left: 3px solid #6B8F71; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>SCOUT</h1>
+                    <p>Daily Reconnaissance Report - September 29, 2025</p>
+                </div>
+
+                <div class="gradient-bar"></div>
+
+                <div class="content">
+                    <p>Good morning,</p>
+                    <p>SCOUT completed overnight reconnaissance. Here's what needs attention:</p>
+
+                    <div class="summary-boxes">
+                        <div class="summary-box">
+                            <div style="color: #E74C3C; font-size: 36px; font-weight: 700;">1</div>
+                            <div style="color: #6E6F71; font-size: 12px;">CRITICAL</div>
+                        </div>
+                        <div class="summary-box">
+                            <div style="color: #F39C12; font-size: 36px; font-weight: 700;">1</div>
+                            <div style="color: #6E6F71; font-size: 12px;">WARNING</div>
+                        </div>
+                        <div class="summary-box">
+                            <div style="color: #6B8F71; font-size: 36px; font-weight: 700;">0</div>
+                            <div style="color: #6E6F71; font-size: 12px;">NORMAL</div>
+                        </div>
+                    </div>
+        <h3>Detailed Findings</h3><h4 style="color: #E74C3C;">CRITICAL Alerts</h4>
+                        <div class="alert-item critical">
+                            <h4>SingleThrow - Conversions</h4>
+                            <p>Significant decrease of 100.0% in conversions</p>
+                            <small>
+                                Current: 0 |
+                                Expected: 5 |
+                                Deviation: 100.0% |
+                                Impact Score: 100
+                            </small>
+                        </div>
+                        <h4 style="color: #F39C12;">WARNING Alerts</h4>
+                        <div class="alert-item warning">
+                            <h4>SingleThrow - Users</h4>
+                            <p>Significant decrease of 54.5% in users</p>
+                            <small>
+                                Current: 15 |
+                                Expected: 33 |
+                                Deviation: 54.5% |
+                                Impact Score: 49
+                            </small>
+                        </div>
+                        
+                </div>
+
+                <div style="padding: 30px; background: #f8f9fa; text-align: center;">
+                    <p style="margin: 0; color: #6E6F71; font-size: 12px;">
+                        SCOUT - Always watching. Always ready.<br>
+                        Single Throw Marketing
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        

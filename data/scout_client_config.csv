@@ -1,0 +1,11 @@
+client_name,property_id,domain,conversion_events,404_page_url,notes
+singlethrow,249571600,singlethrow.com,"contact_form_submit,newsletter_signup",/404,Small business site
+seaviewortho,249616444,seaviewortho.com,"appointment_request,phone_click,form_submission",/not-found,Orthodontist practice
+jagpt,249621118,jagpt.com,"purchase,add_to_cart,begin_checkout",/error,E-commerce site
+raycatenalexus,255317173,raycatenalexus.com,"lead_form,test_drive_request,brochure_download",/404,Auto dealership
+raycatenalexusofwhiteplains,255362000,raycatenalexusofwhiteplains.com,"contact_submit,inventory_inquiry,service_booking",/404,Auto dealership branch
+westchesterbmw,255363148,westchesterbmw.com,"lead_generation,schedule_service,parts_inquiry",/error-page,BMW dealership
+footstarorthotics,256257680,footstarorthotics.com,"consultation_request,product_inquiry",/page-not-found,Medical device company
+cgteam,256365192,cgteam.com,"contact_form,quote_request,consultation_booking",/404,Business services
+performanceortho,256387349,performanceortho.com,"appointment_booking,contact_submit",/not-found,Orthopedic practice
+bridgewaterinfiniti,256393572,bridgewaterinfiniti.com,"test_drive,contact_dealer,service_appointment",/404,Infiniti dealership

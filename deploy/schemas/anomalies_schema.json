@@ -1,0 +1,98 @@
+[
+  {
+    "name": "anomaly_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Unique identifier for the anomaly"
+  },
+  {
+    "name": "detection_timestamp",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED",
+    "description": "When the anomaly was detected"
+  },
+  {
+    "name": "property_id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "GA4 property identifier"
+  },
+  {
+    "name": "client_name",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Client name derived from property"
+  },
+  {
+    "name": "date",
+    "type": "DATE",
+    "mode": "REQUIRED",
+    "description": "Date of the anomalous data point"
+  },
+  {
+    "name": "metric",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Metric name (sessions, users, conversions, etc.)"
+  },
+  {
+    "name": "actual_value",
+    "type": "FLOAT64",
+    "mode": "REQUIRED",
+    "description": "Actual observed value"
+  },
+  {
+    "name": "expected_value",
+    "type": "FLOAT64",
+    "mode": "REQUIRED",
+    "description": "Expected baseline value"
+  },
+  {
+    "name": "deviation_percent",
+    "type": "FLOAT64",
+    "mode": "REQUIRED",
+    "description": "Percentage deviation from expected"
+  },
+  {
+    "name": "z_score",
+    "type": "FLOAT64",
+    "mode": "NULLABLE",
+    "description": "Statistical z-score"
+  },
+  {
+    "name": "detection_method",
+    "type": "STRING",
+    "mode": "REPEATED",
+    "description": "Methods that detected this anomaly"
+  },
+  {
+    "name": "business_impact_score",
+    "type": "INT64",
+    "mode": "REQUIRED",
+    "description": "Business impact score 0-100"
+  },
+  {
+    "name": "priority",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "Priority level: critical, warning, normal"
+  },
+  {
+    "name": "root_cause",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Identified root cause if any"
+  },
+  {
+    "name": "root_cause_confidence",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Confidence in root cause: high, medium, low"
+  },
+  {
+    "name": "alert_sent",
+    "type": "BOOLEAN",
+    "mode": "REQUIRED",
+    "description": "Whether alert was sent for this anomaly"
+  }
+]

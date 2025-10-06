@@ -1,0 +1,51 @@
+# AnomalyInsights - Python Dependencies
+# Generated: 2025-09-25
+# Python 3.10+ required
+
+# Core Data Processing
+pandas==2.0.3
+numpy==1.24.3
+pyarrow==12.0.1  # For efficient BigQuery operations
+
+# Google Cloud
+google-cloud-bigquery>=3.11.0
+google-analytics-data>=0.18.0
+google-auth>=2.0.0
+google-cloud-bigquery-storage==2.22.0  # Faster BQ reads
+google-cloud-scheduler==2.11.0
+google-cloud-functions==1.13.3
+google-cloud-firestore==2.11.1
+google-cloud-logging==3.5.0
+
+# Statistical Analysis
+scipy==1.11.1
+statsmodels==0.14.0
+
+# Email & Notifications - Using Google Workspace instead
+# sendgrid==6.10.0  # Replaced with Gmail API (no external costs)
+google-api-python-client>=2.100.0  # Gmail API [R9]
+google-auth-httplib2>=0.1.1  # Google authentication
+google-auth-oauthlib>=1.1.0  # OAuth for Google
+jinja2==3.1.2  # Email templates
+
+# Development Tools
+python-dotenv==1.0.0
+pytest==7.4.0
+black==23.7.0  # Code formatting
+pylint==2.17.4
+
+# API Framework (for later dashboard backend)
+fastapi==0.100.0
+uvicorn==0.23.1
+pydantic==2.0.3
+
+# Date/Time Handling
+pytz==2023.3
+python-dateutil==2.8.2
+
+# Microsoft Teams Integration
+pymsteams==0.2.2
+
+# Development Extras
+ipython==8.14.0
+jupyter==1.0.0  # For exploratory analysis

@@ -2,3 +2,49 @@
 *.log
 .DS_Store
 *.tmp
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+ui/dist/
+ui/build/
+
+# Local config
+.claude/settings.local.json
+*.local
+
+# Test data
+data/*.json
+!data/scout_client_config.csv
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Email logs
+data/email_logs/

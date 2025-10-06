@@ -1,0 +1,30 @@
+/* SCOUT Visual System - STM Brand Aligned */
+/* Created: 2025-09-25 */
+/* Confidence: 95% this will maintain brand consistency */
+
+/* ========================
+   STM BRAND FOUNDATION
+   ======================== */
+:root {
+  /* Primary STM Brand Colors */
+  --stm-single: #1A5276;      /* SINGLE - Primary Blue */
+  --stm-throw: #6B8F71;       /* THROW - Sage Green */
+  --stm-marketing: #6E6F71;   /* MARKETING - Neutral Gray */
+  
+  /* SCOUT Semantic Mappings */
+  --scout-primary: var(--stm-single);
+  --scout-success: var(--stm-throw);
+  --scout-neutral: var(--stm-marketing);
+  
+  /* Alert Levels (Non-STM but necessary) */
+  --scout-warning: #F39C12;   /* Orange - Medium priority */
+  --scout-danger: #E74C3C;    /* Red - High priority */
+  
+  /* UI Applications */
+  --scout-bg-primary: #FFFFFF;
+  --scout-bg-secondary: #F8F9FA;
+  --scout-border: #E1E4E8;
+  --scout-text-primary: #24292E;
+  --scout-text-secondary: var(--stm-marketing);
+  --scout-text-muted: #6C757D;
+}
