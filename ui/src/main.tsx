@@ -24,9 +24,6 @@ const queryClient = new QueryClient()
 // [AR1]: Scout brand identity visible in every view
 const rootRoute = new RootRoute({
   component: () => {
-    // [R13] Check if backend API is available
-    const hasBackend = import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL !== 'http://localhost:5000'
-
     return (
       <div className="min-h-screen bg-scout-light">
         {/* STM-branded header with SCOUT identity */}
@@ -71,15 +68,13 @@ const rootRoute = new RootRoute({
                 >
                   Trends
                 </Link>
-                {/* [R13] Only show Configuration in development with backend */}
-                {hasBackend && (
-                  <Link
-                    to="/config"
-                    className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-                  >
-                    Configuration
-                  </Link>
-                )}
+                {/* [R13] Configuration now works in production via Cloud Storage */}
+                <Link
+                  to="/config"
+                  className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                >
+                  Configuration
+                </Link>
               </nav>
             </div>
           </div>

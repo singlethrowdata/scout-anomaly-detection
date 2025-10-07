@@ -1,5 +1,4 @@
-// [R13] Cloud Storage configuration management (Proxy-based)
-// → needs: proxy-server-api
+// [R13] Cloud Storage configuration management (Direct public URLs)
 // → provides: config-persistence-layer
 
 // [R13] Property configuration interface
@@ -20,27 +19,30 @@ interface CloudStorageResponse<T> {
   error?: string;
 }
 
-// [R13] Proxy server configuration
-// → provides: proxy-api-url
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+// [R13] Cloud Storage public URLs
+// → provides: cloud-storage-urls
+const CLOUD_STORAGE_BASE = 'https://storage.googleapis.com';
+const CONFIG_BUCKET = 'scout-config';
+const RESULTS_BUCKET = 'scout-results';
 
-// [R13] Load property configuration from Cloud Storage via proxy
-// → needs: proxy-api-url
+// [R13] Load property configuration from Cloud Storage
 // → provides: property-config-data
 export async function loadPropertyConfig(): Promise<CloudStorageResponse<PropertyConfig[]>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/config/properties`);
+    const response = await fetch(`${CLOUD_STORAGE_BASE}/${CONFIG_BUCKET}/properties.json`);
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: response.statusText }));
-      throw new Error(error.message || `HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const config = await response.json();
+    const properties = await response.json();
+
+    // Handle both array format and object format with 'properties' key
+    const data = Array.isArray(properties) ? properties : (properties.properties || []);
 
     return {
       success: true,
-      data: config.properties || []
+      data
     };
   } catch (error) {
     console.error('Failed to load configuration from Cloud Storage:', error);
@@ -51,25 +53,21 @@ export async function loadPropertyConfig(): Promise<CloudStorageResponse<Propert
   }
 }
 
-// [R13] Save property configuration to Cloud Storage via proxy
-// → needs: proxy-api-url, property-config-data
+// [R13] Save property configuration to Cloud Storage
+// → needs: cloud-storage-write-api
 // → provides: config-persistence
-export async function savePropertyConfig(properties: PropertyConfig[]): Promise<CloudStorageResponse<void>> {
+// NOTE: Direct writes to Cloud Storage require backend API or signed URLs
+// For production, this should trigger a backend workflow or use Cloud Functions
+export async function savePropertyConfig(_properties: PropertyConfig[]): Promise<CloudStorageResponse<void>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/config/properties`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ properties })
-    });
+    // TODO: Implement Cloud Storage write via Cloud Function or signed URL
+    // For MVP, this is read-only in production
+    console.warn('Cloud Storage writes not implemented in production - configuration is read-only');
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: response.statusText }));
-      throw new Error(error.message || `HTTP ${response.status}`);
-    }
-
-    return { success: true };
+    return {
+      success: false,
+      error: 'Configuration updates require backend API (not available in production)'
+    };
   } catch (error) {
     console.error('Failed to save configuration to Cloud Storage:', error);
     return {
@@ -79,16 +77,14 @@ export async function savePropertyConfig(properties: PropertyConfig[]): Promise<
   }
 }
 
-// [R13] Load anomaly results from Cloud Storage via proxy
-// → needs: proxy-api-url
+// [R13] Load anomaly results from Cloud Storage
 // → provides: anomaly-results-data
 export async function loadAnomalyResults(): Promise<CloudStorageResponse<any>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/results/anomalies`);
+    const response = await fetch(`${CLOUD_STORAGE_BASE}/${RESULTS_BUCKET}/scout_anomaly_results.json`);
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: response.statusText }));
-      throw new Error(error.message || `HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const results = await response.json();
@@ -106,16 +102,14 @@ export async function loadAnomalyResults(): Promise<CloudStorageResponse<any>> {
   }
 }
 
-// [R14] Load segment-level anomaly results from Cloud Storage via proxy
-// → needs: proxy-api-url
+// [R14] Load segment-level anomaly results from Cloud Storage
 // → provides: segment-anomaly-results-data
 export async function loadSegmentAnomalyResults(): Promise<CloudStorageResponse<any>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/results/segment-anomalies`);
+    const response = await fetch(`${CLOUD_STORAGE_BASE}/${RESULTS_BUCKET}/scout_segment_anomalies.json`);
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: response.statusText }));
-      throw new Error(error.message || `HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const results = await response.json();
