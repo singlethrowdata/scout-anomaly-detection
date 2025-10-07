@@ -50,7 +50,7 @@ export default function Records() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/results/records');
+      const response = await fetch('https://storage.googleapis.com/scout-results/scout_record_alerts.json');
       if (!response.ok) {
         throw new Error('Failed to load record alerts');
       }
@@ -320,7 +320,7 @@ export default function Records() {
                         <div className="bg-scout-blue/10 p-2 rounded border border-scout-blue">
                           <p className="text-scout-gray text-xs">Change</p>
                           <p className="font-semibold text-scout-blue">
-                            {alert.record_type === 'high' 
+                            {alert.record_type === 'high'
                               ? `+${alert.increase?.toFixed(1) ?? 'N/A'}%`
                               : `${alert.decline?.toFixed(1) ?? 'N/A'}%`
                             }

@@ -36,7 +36,7 @@ export default function Disasters() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/results/disasters');
+      const response = await fetch('https://storage.googleapis.com/scout-results/scout_disaster_alerts.json');
       if (!response.ok) {
         throw new Error('Failed to load disaster alerts');
       }

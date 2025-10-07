@@ -43,7 +43,7 @@ export default function Trends() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/results/trends');
+      const response = await fetch('https://storage.googleapis.com/scout-results/scout_trend_alerts.json');
       if (!response.ok) {
         throw new Error('Failed to load trend alerts');
       }

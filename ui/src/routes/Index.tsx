@@ -26,16 +26,15 @@ export default function Index() {
   }, []);
 
   const fetchAllDetectors = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      // Fetch all 4 detector results in parallel
+    try {
       const [disastersRes, spamRes, recordsRes, trendsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/results/disasters'),
-        fetch('http://localhost:5000/api/results/spam'),
-        fetch('http://localhost:5000/api/results/records'),
-        fetch('http://localhost:5000/api/results/trends'),
+        fetch('https://storage.googleapis.com/scout-results/scout_disaster_alerts.json'),
+        fetch('https://storage.googleapis.com/scout-results/scout_spam_alerts.json'),
+        fetch('https://storage.googleapis.com/scout-results/scout_record_alerts.json'),
+        fetch('https://storage.googleapis.com/scout-results/scout_trend_alerts.json'),
       ]);
 
       const [disasters, spam, records, trends] = await Promise.all([
@@ -246,9 +245,9 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-4">
                     <span className={`px-2 py-1 text-xs font-semibold rounded ${alert.priority === 'P0' ? 'bg-scout-red text-white' :
-                        alert.priority === 'P1' ? 'bg-orange-500 text-white' :
-                          alert.priority === 'P2' ? 'bg-scout-yellow text-white' :
-                            'bg-scout-green text-white'
+                      alert.priority === 'P1' ? 'bg-orange-500 text-white' :
+                        alert.priority === 'P2' ? 'bg-scout-yellow text-white' :
+                          'bg-scout-green text-white'
                       }`}>
                       {alert.priority}
                     </span>

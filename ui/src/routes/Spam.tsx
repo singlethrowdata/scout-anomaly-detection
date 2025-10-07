@@ -40,7 +40,7 @@ export default function Spam() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/results/spam');
+      const response = await fetch('https://storage.googleapis.com/scout-results/scout_spam_alerts.json');
       if (!response.ok) {
         throw new Error('Failed to load spam alerts');
       }
