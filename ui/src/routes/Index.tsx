@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
-import { AlertCircle, TrendingUp, TrendingDown, Activity, Clock, Target, AlertTriangle, CheckCircle, Trophy, Shield } from 'lucide-react';
+import { TrendingUp, Activity, Target, AlertTriangle, CheckCircle, Trophy, Shield } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 
 // [R17-R20]: Load real detector data from Cloud Storage for dashboard stats

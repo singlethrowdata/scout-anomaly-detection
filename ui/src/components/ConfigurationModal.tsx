@@ -78,7 +78,6 @@ export function ConfigurationModal({
   // [R13] Editable fields for configuration
   const [clientName, setClientName] = useState(propertyName)
   const [domain, setDomain] = useState(existingDomain)
-  const [notes, setNotes] = useState(existingNotes)
 
   // [R13] New property mode fields
   const isNewProperty = !propertyId || propertyId === ''
