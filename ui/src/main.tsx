@@ -23,74 +23,82 @@ const queryClient = new QueryClient()
 
 // [AR1]: Scout brand identity visible in every view
 const rootRoute = new RootRoute({
-  component: () => (
-    <div className="min-h-screen bg-scout-light">
-      {/* STM-branded header with SCOUT identity */}
-      <header className="bg-scout-blue text-white shadow-lg">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Target className="w-8 h-8 text-scout-green" />
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">SCOUT</h1>
-                <p className="text-xs text-scout-light/80">Statistical Client Observation & Unified Tracking</p>
+  component: () => {
+    // [R13] Check if backend API is available
+    const hasBackend = import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL !== 'http://localhost:5000'
+
+    return (
+      <div className="min-h-screen bg-scout-light">
+        {/* STM-branded header with SCOUT identity */}
+        <header className="bg-scout-blue text-white shadow-lg">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Target className="w-8 h-8 text-scout-green" />
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">SCOUT</h1>
+                  <p className="text-xs text-scout-light/80">Statistical Client Observation & Unified Tracking</p>
+                </div>
               </div>
+              <nav className="flex gap-6">
+                <Link
+                  to="/"
+                  className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/disasters"
+                  className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                >
+                  Disasters
+                </Link>
+                <Link
+                  to="/spam"
+                  className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                >
+                  Spam
+                </Link>
+                <Link
+                  to="/records"
+                  className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                >
+                  Records
+                </Link>
+                <Link
+                  to="/trends"
+                  className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                >
+                  Trends
+                </Link>
+                {/* [R13] Only show Configuration in development with backend */}
+                {hasBackend && (
+                  <Link
+                    to="/config"
+                    className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
+                  >
+                    Configuration
+                  </Link>
+                )}
+              </nav>
             </div>
-            <nav className="flex gap-6">
-              <Link
-                to="/"
-                className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/disasters"
-                className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-              >
-                Disasters
-              </Link>
-              <Link
-                to="/spam"
-                className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-              >
-                Spam
-              </Link>
-              <Link
-                to="/records"
-                className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-              >
-                Records
-              </Link>
-              <Link
-                to="/trends"
-                className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-              >
-                Trends
-              </Link>
-              <Link
-                to="/config"
-                className="px-4 py-2 rounded-md hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold"
-              >
-                Configuration
-              </Link>
-            </nav>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main content area */}
-      <main className="container mx-auto px-6 py-8">
-        <Outlet />
-      </main>
+        {/* Main content area */}
+        <main className="container mx-auto px-6 py-8">
+          <Outlet />
+        </main>
 
-      {/* Footer with STM branding */}
-      <footer className="mt-12 border-t bg-white">
-        <div className="container mx-auto px-6 py-4 text-center text-sm text-scout-gray">
-          <p>SCOUT Anomaly Detection System • Powered by STM Digital</p>
-        </div>
-      </footer>
-    </div>
-  ),
+        {/* Footer with STM branding */}
+        <footer className="mt-12 border-t bg-white">
+          <div className="container mx-auto px-6 py-4 text-center text-sm text-scout-gray">
+            <p>SCOUT Anomaly Detection System • Powered by STM Digital</p>
+          </div>
+        </footer>
+      </div>
+    )
+  },
 })
 
 const indexRoute = new Route({
