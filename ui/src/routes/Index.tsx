@@ -30,11 +30,13 @@ export default function Index() {
     setError(null);
 
     try {
+      // Add cache-busting parameter to bypass CDN cache
+      const cacheBuster = `?t=${Date.now()}`;
       const [disastersRes, spamRes, recordsRes, trendsRes] = await Promise.all([
-        fetch('https://storage.googleapis.com/scout-results/scout_disaster_alerts.json'),
-        fetch('https://storage.googleapis.com/scout-results/scout_spam_alerts.json'),
-        fetch('https://storage.googleapis.com/scout-results/scout_record_alerts.json'),
-        fetch('https://storage.googleapis.com/scout-results/scout_trend_alerts.json'),
+        fetch(`https://storage.googleapis.com/scout-results/scout_disaster_alerts.json${cacheBuster}`),
+        fetch(`https://storage.googleapis.com/scout-results/scout_spam_alerts.json${cacheBuster}`),
+        fetch(`https://storage.googleapis.com/scout-results/scout_record_alerts.json${cacheBuster}`),
+        fetch(`https://storage.googleapis.com/scout-results/scout_trend_alerts.json${cacheBuster}`),
       ]);
 
       const [disasters, spam, records, trends] = await Promise.all([
@@ -59,16 +61,24 @@ export default function Index() {
     (results?.records.alerts?.length || 0) +
     (results?.trends.alerts?.length || 0);
 
-  const criticalAlerts = (results?.disasters.total_alerts || 0); // P0 disasters are critical
+  const criticalAlerts = (results?.disasters.alerts?.length || 0); // P0 disasters are critical
   const recordHighs = results?.records.alerts?.filter((a: any) => a.record_type === 'high').length || 0;
   const recordLows = results?.records.alerts?.filter((a: any) => a.record_type === 'low').length || 0;
 
-  // Get most recent timestamp across all detectors
+  // Get unique properties count from all alerts
+  const uniqueProperties = results ? new Set([
+    ...(results.disasters.alerts || []).map((a: any) => a.property_id),
+    ...(results.spam.alerts || []).map((a: any) => a.property_id),
+    ...(results.records.alerts || []).map((a: any) => a.property_id),
+    ...(results.trends.alerts || []).map((a: any) => a.property_id),
+  ]).size : 0;
+
+  // Get most recent timestamp across all detectors (use 'timestamp' field)
   const lastScan = results ? [
-    results.disasters.generated_at,
-    results.spam.generated_at,
-    results.records.generated_at,
-    results.trends.generated_at,
+    results.disasters.timestamp,
+    results.spam.timestamp,
+    results.records.timestamp,
+    results.trends.timestamp,
   ].filter(Boolean).sort().reverse()[0] : '';
 
   // Combine recent alerts from all detectors
@@ -89,7 +99,7 @@ export default function Index() {
           <div>
             <h2 className="text-3xl font-bold">SCOUT Mission Control</h2>
             <p className="text-blue-100">
-              Real-time anomaly detection across {results?.disasters.properties_analyzed || 0} GA4 properties
+              Real-time anomaly detection across {uniqueProperties} GA4 properties
             </p>
           </div>
         </div>
@@ -190,7 +200,7 @@ export default function Index() {
             <CardTitle className="text-sm font-medium text-scout-blue">Properties Monitored</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '...' : (results?.disasters.properties_analyzed || 0)}</div>
+            <div className="text-2xl font-bold">{loading ? '...' : uniqueProperties}</div>
             <p className="text-xs text-muted-foreground">Active monitoring</p>
           </CardContent>
         </Card>

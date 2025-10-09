@@ -29,7 +29,9 @@ const RESULTS_BUCKET = 'scout-results';
 // → provides: property-config-data
 export async function loadPropertyConfig(): Promise<CloudStorageResponse<PropertyConfig[]>> {
   try {
-    const response = await fetch(`${CLOUD_STORAGE_BASE}/${CONFIG_BUCKET}/properties.json`);
+    // Add cache-busting parameter to bypass CDN cache and ensure CORS headers are present
+    const cacheBuster = `?t=${Date.now()}`;
+    const response = await fetch(`${CLOUD_STORAGE_BASE}/${CONFIG_BUCKET}/properties.json${cacheBuster}`);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);

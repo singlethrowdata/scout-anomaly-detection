@@ -1,11 +1,12 @@
 [
   {
     "origin": [
-      "https://scout-anomaly-detection.vercel.app",
-      "https://*.scout-anomaly-detection.vercel.app",
-      "https://scout.yourdomain.com",
+      "https://ui-nn922c08y-single-throws-projects.vercel.app",
+      "https://*.vercel.app",
       "http://localhost:3001",
-      "http://localhost:5173"
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175"
     ],
     "method": [
       "GET",

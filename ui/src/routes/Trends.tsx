@@ -43,7 +43,8 @@ export default function Trends() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://storage.googleapis.com/scout-results/scout_trend_alerts.json');
+      // Add cache-busting to bypass CDN cache
+      const response = await fetch(`https://storage.googleapis.com/scout-results/scout_trend_alerts.json?t=${Date.now()}`);
       if (!response.ok) {
         throw new Error('Failed to load trend alerts');
       }
@@ -120,7 +121,7 @@ export default function Trends() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-scout-gray">
-            {results && `Last scanned: ${new Date(results.generated_at).toLocaleString()}`}
+            {results && results.timestamp && `Last scanned: ${new Date(results.timestamp).toLocaleString()}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -142,7 +143,7 @@ export default function Trends() {
             <CardTitle className="text-sm font-medium text-scout-blue">Properties Monitored</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-scout-blue">{results?.properties_analyzed || 0}</div>
+            <div className="text-2xl font-bold text-scout-blue">{uniqueProperties.length || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-green bg-green-50">
@@ -150,7 +151,7 @@ export default function Trends() {
             <CardTitle className="text-sm font-medium text-scout-blue">Upward Trends ↗️</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-scout-green">{results?.upward_trends || 0}</div>
+            <div className="text-3xl font-bold text-scout-green">{results?.alerts?.filter((a: any) => a.trend_direction === 'up').length || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-yellow bg-yellow-50">
@@ -158,7 +159,7 @@ export default function Trends() {
             <CardTitle className="text-sm font-medium text-scout-blue">Downward Trends ↘️</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-scout-yellow">{results?.downward_trends || 0}</div>
+            <div className="text-3xl font-bold text-scout-yellow">{results?.alerts?.filter((a: any) => a.trend_direction === 'down').length || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-gray bg-gray-50">
@@ -166,7 +167,7 @@ export default function Trends() {
             <CardTitle className="text-sm font-medium text-scout-blue">Total Trends</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-scout-gray">{results?.total_trends || 0}</div>
+            <div className="text-2xl font-bold text-scout-gray">{results?.alerts?.length || 0}</div>
           </CardContent>
         </Card>
       </div>
@@ -191,7 +192,7 @@ export default function Trends() {
                 <option value="all">All Properties</option>
                 {uniqueProperties.map(propId => (
                   <option key={propId} value={propId}>
-                    {results?.alerts.find(a => a.property_id === propId)?.domain || propId}
+                    {results?.alerts.find(a => a.property_id === propId)?.property_name || results?.alerts.find(a => a.property_id === propId)?.domain || propId}
                   </option>
                 ))}
               </select>
@@ -276,7 +277,7 @@ export default function Trends() {
                           <TrendingDown className="h-6 w-6 text-scout-yellow" />
                         )}
                         <h3 className="font-bold text-scout-blue">
-                          {alert.domain}
+                          {alert.property_name || alert.domain || alert.property_id}
                         </h3>
                         <span className={`px-2 py-1 text-white text-xs font-semibold rounded ${alert.trend_direction === 'up' ? 'bg-scout-green' : 'bg-scout-yellow'
                           }`}>
@@ -303,18 +304,18 @@ export default function Trends() {
                           <p className="text-scout-gray text-xs">30-Day Avg (Recent)</p>
                           <p className={`font-bold ${alert.trend_direction === 'up' ? 'text-scout-green' : 'text-scout-yellow'
                             }`}>
-                            {alert.current_30day_avg.toLocaleString()}
+                            {alert.current_30day_avg ? alert.current_30day_avg.toLocaleString() : 'N/A'}
                           </p>
                         </div>
                         <div className="bg-scout-gray/10 p-2 rounded border border-scout-gray">
                           <p className="text-scout-gray text-xs">180-Day Avg (Baseline)</p>
                           <p className="font-semibold text-scout-gray">
-                            {alert.baseline_180day_avg.toLocaleString()}
+                            {alert.baseline_180day_avg ? alert.baseline_180day_avg.toLocaleString() : 'N/A'}
                           </p>
                         </div>
                       </div>
                       <p className="text-xs text-scout-gray mt-2">
-                        Detected: {new Date(alert.date).toLocaleDateString()}
+                        Detected: {new Date(alert.detected_at || alert.date).toLocaleDateString()}
                       </p>
                     </div>
                     <Button

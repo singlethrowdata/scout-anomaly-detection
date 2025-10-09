@@ -9,23 +9,27 @@ import { Shield, RefreshCw, Download, TrendingUp, Filter } from 'lucide-react';
 // [R18]: Spam alert data structure
 interface SpamAlert {
   property_id: string;
-  domain: string;
-  date: string;
-  dimension: 'overall' | 'geography' | 'traffic_source';
-  dimension_value: string;
-  sessions: number;
-  z_score: number;
-  bounce_rate: number;
-  avg_session_duration: number;
-  quality_score: number;
+  property_name: string;
+  alert_type: string;
   severity: 'warning' | 'critical';
+  metric: string;
+  current_value: number;
+  baseline_value: number;
+  z_score: number;
+  traffic_source: string;
+  message: string;
+  detected_at: string;
 }
 
 interface SpamResults {
-  generated_at: string;
-  properties_analyzed: number;
-  total_spam_alerts: number;
+  detector: string;
+  timestamp: string;
   alerts: SpamAlert[];
+  summary: {
+    total_properties_analyzed: number;
+    total_alerts: number;
+    warning_alerts: number;
+  };
 }
 
 export default function Spam() {
@@ -40,7 +44,8 @@ export default function Spam() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://storage.googleapis.com/scout-results/scout_spam_alerts.json');
+      // Add cache-busting to bypass CDN cache
+      const response = await fetch(`https://storage.googleapis.com/scout-results/scout_spam_alerts.json?t=${Date.now()}`);
       if (!response.ok) {
         throw new Error('Failed to load spam alerts');
       }
@@ -60,7 +65,7 @@ export default function Spam() {
 
   const filteredAlerts = results?.alerts.filter(alert => {
     if (selectedProperty !== 'all' && alert.property_id !== selectedProperty) return false;
-    if (selectedDimension !== 'all' && alert.dimension !== selectedDimension) return false;
+    if (selectedDimension !== 'all' && alert.traffic_source !== selectedDimension) return false;
     return true;
   }) || [];
 
@@ -116,7 +121,7 @@ export default function Spam() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-scout-gray">
-            {results && `Last scanned: ${new Date(results.generated_at).toLocaleString()}`}
+            {results && results.timestamp && `Last scanned: ${new Date(results.timestamp).toLocaleString()}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -138,7 +143,7 @@ export default function Spam() {
             <CardTitle className="text-sm font-medium text-scout-blue">Properties Monitored</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-scout-blue">{results?.properties_analyzed || 0}</div>
+            <div className="text-2xl font-bold text-scout-blue">{results?.summary?.total_properties_analyzed || uniqueProperties.length || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-yellow bg-yellow-100">
@@ -146,7 +151,7 @@ export default function Spam() {
             <CardTitle className="text-sm font-medium text-scout-blue">Spam Alerts</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-scout-yellow">{results?.total_spam_alerts || 0}</div>
+            <div className="text-3xl font-bold text-scout-yellow">{results?.summary?.total_alerts || results?.alerts?.length || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-green bg-green-50">
@@ -155,7 +160,7 @@ export default function Spam() {
           </CardHeader>
           <CardContent>
             <div className="text-sm text-scout-gray font-semibold">
-              Bounce Rate & Duration Analysis
+              Bounce Rate Analysis
             </div>
           </CardContent>
         </Card>
@@ -181,7 +186,7 @@ export default function Spam() {
                 <option value="all">All Properties</option>
                 {uniqueProperties.map(propId => (
                   <option key={propId} value={propId}>
-                    {results?.alerts.find(a => a.property_id === propId)?.domain || propId}
+                    {results?.alerts.find(a => a.property_id === propId)?.property_name || propId}
                   </option>
                 ))}
               </select>
@@ -193,10 +198,11 @@ export default function Spam() {
                 onChange={(e) => setSelectedDimension(e.target.value)}
                 className="w-full px-3 py-2 border border-scout-gray rounded-md focus:border-scout-blue focus:outline-none"
               >
-                <option value="all">All Dimensions</option>
-                <option value="overall">Overall</option>
-                <option value="geography">Geography</option>
-                <option value="traffic_source">Traffic Source</option>
+                <option value="all">All Traffic Sources</option>
+                <option value="organic">Organic</option>
+                <option value="paid">Paid</option>
+                <option value="direct">Direct</option>
+                <option value="referral">Referral</option>
               </select>
             </div>
           </div>
@@ -238,40 +244,40 @@ export default function Spam() {
             ) : (
               filteredAlerts.map((alert, index) => (
                 <div
-                  key={`${alert.property_id}-${alert.date}-${index}`}
+                  key={`${alert.property_id}-${alert.detected_at}-${index}`}
                   className="p-5 border-l-4 border-scout-yellow bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors shadow-sm"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <Shield className="h-5 w-5 text-scout-yellow" />
-                        <h3 className="font-bold text-scout-blue">{alert.domain}</h3>
+                        <h3 className="font-bold text-scout-blue">{alert.property_name || alert.property_id}</h3>
                         <span className="px-2 py-1 bg-scout-yellow text-white text-xs font-semibold rounded">
                           {alert.severity.toUpperCase()}
                         </span>
                         <span className="px-2 py-1 bg-scout-blue/10 text-scout-blue text-xs rounded border border-scout-blue">
-                          {alert.dimension}: {alert.dimension_value}
+                          Traffic: {alert.traffic_source}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-3 text-sm mt-3">
                         <div>
-                          <p className="text-scout-gray">Sessions (Spike)</p>
+                          <p className="text-scout-gray">Bounce Rate (Spike)</p>
                           <p className="font-semibold text-scout-yellow flex items-center gap-1">
                             <TrendingUp className="h-4 w-4" />
-                            {alert.sessions} (+{alert.z_score.toFixed(1)}σ)
+                            {alert.current_value.toFixed(1)}% (+{alert.z_score.toFixed(1)}σ)
                           </p>
                         </div>
                         <div>
-                          <p className="text-scout-gray">Date</p>
-                          <p className="font-semibold text-scout-blue">{new Date(alert.date).toLocaleDateString()}</p>
+                          <p className="text-scout-gray">Detected</p>
+                          <p className="font-semibold text-scout-blue">{new Date(alert.detected_at).toLocaleDateString()}</p>
                         </div>
-                        <div className="bg-scout-red/10 p-2 rounded border border-scout-red">
-                          <p className="text-scout-gray text-xs">Bounce Rate</p>
-                          <p className="font-bold text-scout-red">{alert.bounce_rate.toFixed(1)}%</p>
+                        <div className="bg-scout-blue/10 p-2 rounded border border-scout-blue">
+                          <p className="text-scout-gray text-xs">Current Value</p>
+                          <p className="font-bold text-scout-red">{alert.current_value.toFixed(1)}%</p>
                         </div>
-                        <div className="bg-scout-red/10 p-2 rounded border border-scout-red">
-                          <p className="text-scout-gray text-xs">Avg Session Duration</p>
-                          <p className="font-bold text-scout-red">{alert.avg_session_duration.toFixed(0)}s</p>
+                        <div className="bg-scout-green/10 p-2 rounded border border-scout-green">
+                          <p className="text-scout-gray text-xs">Baseline</p>
+                          <p className="font-bold text-scout-green">{alert.baseline_value.toFixed(1)}%</p>
                         </div>
                       </div>
                     </div>

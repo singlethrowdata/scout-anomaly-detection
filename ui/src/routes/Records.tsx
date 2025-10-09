@@ -50,7 +50,8 @@ export default function Records() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://storage.googleapis.com/scout-results/scout_record_alerts.json');
+      // Add cache-busting to bypass CDN cache
+      const response = await fetch(`https://storage.googleapis.com/scout-results/scout_record_alerts.json?t=${Date.now()}`);
       if (!response.ok) {
         throw new Error('Failed to load record alerts');
       }
@@ -131,7 +132,7 @@ export default function Records() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-scout-gray">
-            {results && `Last scanned: ${new Date(results.generated_at).toLocaleString()}`}
+            {results && results.timestamp && `Last scanned: ${new Date(results.timestamp).toLocaleString()}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -153,7 +154,7 @@ export default function Records() {
             <CardTitle className="text-sm font-medium text-scout-blue">Properties Monitored</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-scout-blue">{results?.properties_analyzed || 0}</div>
+            <div className="text-2xl font-bold text-scout-blue">{uniqueProperties.length || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-green bg-green-50">
@@ -177,7 +178,7 @@ export default function Records() {
             <CardTitle className="text-sm font-medium text-scout-blue">Total Records</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-scout-gray">{results?.total_alerts || 0}</div>
+            <div className="text-2xl font-bold text-scout-gray">{results?.alerts?.length || 0}</div>
           </CardContent>
         </Card>
       </div>
@@ -202,7 +203,7 @@ export default function Records() {
                 <option value="all">All Properties</option>
                 {uniqueProperties.map(propId => (
                   <option key={propId} value={propId}>
-                    {results?.alerts.find(a => a.property_id === propId)?.domain || propId}
+                    {results?.alerts.find(a => a.property_id === propId)?.property_name || results?.alerts.find(a => a.property_id === propId)?.domain || propId}
                   </option>
                 ))}
               </select>
@@ -287,7 +288,7 @@ export default function Records() {
                           <TrendingDown className="h-6 w-6 text-scout-red" />
                         )}
                         <h3 className="font-bold text-scout-blue">
-                          {alert.domain}
+                          {alert.property_name || alert.domain || alert.property_id}
                         </h3>
                         <span className={`px-2 py-1 text-white text-xs font-semibold rounded ${alert.record_type === 'high' ? 'bg-scout-green' : 'bg-scout-red'
                           }`}>
@@ -306,7 +307,7 @@ export default function Records() {
                           <p className="text-scout-gray">Current Value</p>
                           <p className={`font-bold text-lg ${alert.record_type === 'high' ? 'text-scout-green' : 'text-scout-red'
                             }`}>
-                            {alert.value?.toLocaleString() ?? 'N/A'}
+                            {alert.current_value?.toLocaleString() ?? alert.value?.toLocaleString() ?? 'N/A'}
                           </p>
                         </div>
                         <div className={`p-2 rounded border ${alert.record_type === 'high' ? 'bg-scout-green/10 border-scout-green' : 'bg-scout-red/10 border-scout-red'
@@ -320,15 +321,17 @@ export default function Records() {
                         <div className="bg-scout-blue/10 p-2 rounded border border-scout-blue">
                           <p className="text-scout-gray text-xs">Change</p>
                           <p className="font-semibold text-scout-blue">
-                            {alert.record_type === 'high'
-                              ? `+${alert.increase?.toFixed(1) ?? 'N/A'}%`
-                              : `${alert.decline?.toFixed(1) ?? 'N/A'}%`
+                            {alert.current_value && alert.previous_record
+                              ? alert.record_type === 'high'
+                                ? `+${(((alert.current_value - alert.previous_record) / alert.previous_record) * 100).toFixed(1)}%`
+                                : `${(((alert.current_value - alert.previous_record) / alert.previous_record) * 100).toFixed(1)}%`
+                              : 'N/A'
                             }
                           </p>
                         </div>
                       </div>
                       <p className="text-xs text-scout-gray mt-2">
-                        Detected: {new Date(alert.date).toLocaleDateString()}
+                        Detected: {new Date(alert.detected_at || alert.date).toLocaleDateString()}
                       </p>
                     </div>
                     <Button

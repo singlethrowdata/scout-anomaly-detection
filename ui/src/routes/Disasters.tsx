@@ -36,7 +36,8 @@ export default function Disasters() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://storage.googleapis.com/scout-results/scout_disaster_alerts.json');
+      // Add cache-busting to bypass CDN cache
+      const response = await fetch(`https://storage.googleapis.com/scout-results/scout_disaster_alerts.json?t=${Date.now()}`);
       if (!response.ok) {
         throw new Error('Failed to load disaster alerts');
       }
@@ -126,7 +127,7 @@ export default function Disasters() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-scout-gray">
-            {results && `Last scanned: ${new Date(results.generated_at).toLocaleString()}`}
+            {results && results.timestamp && `Last scanned: ${new Date(results.timestamp).toLocaleString()}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -148,7 +149,7 @@ export default function Disasters() {
             <CardTitle className="text-sm font-medium text-scout-blue">Properties Monitored</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-scout-blue">{results?.properties_analyzed || 0}</div>
+            <div className="text-2xl font-bold text-scout-blue">{results?.summary?.total_properties_analyzed || new Set(results?.alerts?.map((a: any) => a.property_id)).size || 0}</div>
           </CardContent>
         </Card>
         <Card className="border-scout-red bg-red-100">
@@ -186,7 +187,7 @@ export default function Disasters() {
               <option value="all">All Properties</option>
               {uniqueProperties.map(propId => (
                 <option key={propId} value={propId}>
-                  {results?.alerts.find(a => a.property_id === propId)?.domain || propId}
+                  {results?.alerts.find(a => a.property_id === propId)?.property_name || results?.alerts.find(a => a.property_id === propId)?.domain || propId}
                 </option>
               ))}
             </select>

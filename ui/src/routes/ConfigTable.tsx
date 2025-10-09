@@ -38,7 +38,13 @@ export default function ConfigTable() {
           throw new Error(response.error || 'Failed to load properties')
         }
 
-        setAllProperties(response.data || [])
+        // Transform data to add missing fields with defaults
+        const transformedProperties = (response.data || []).map(prop => ({
+          ...prop,
+          dataset_id: prop.dataset_id || `analytics_${prop.property_id}`,
+          is_configured: prop.is_configured ?? (!!prop.conversion_events && !!prop.client_name)
+        }))
+        setAllProperties(transformedProperties)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load properties from Cloud Storage')
         console.error('Error fetching properties:', err)
@@ -306,7 +312,9 @@ export default function ConfigTable() {
                     </td>
                     <td className="py-4 px-4">
                       <code className="text-xs text-scout-gray font-mono">
-                        {property.dataset_id.split(':')[1]}
+                        {property.dataset_id?.includes(':')
+                          ? property.dataset_id.split(':')[1]
+                          : property.dataset_id}
                       </code>
                     </td>
                     <td className="py-4 px-4">
@@ -333,7 +341,7 @@ export default function ConfigTable() {
                     <td className="py-4 px-4">
                       {property.conversion_events ? (
                         <div className="flex flex-wrap gap-1">
-                          {property.conversion_events.split(',').slice(0, 2).map((event, idx) => (
+                          {property.conversion_events?.split(',').slice(0, 2).map((event, idx) => (
                             <span
                               key={idx}
                               className="text-xs bg-scout-green/10 text-scout-green px-2 py-1 rounded"
@@ -341,9 +349,9 @@ export default function ConfigTable() {
                               {event.trim()}
                             </span>
                           ))}
-                          {property.conversion_events.split(',').length > 2 && (
+                          {property.conversion_events?.split(',').length > 2 && (
                             <span className="text-xs text-scout-gray px-2 py-1">
-                              +{property.conversion_events.split(',').length - 2} more
+                              +{property.conversion_events?.split(',').length - 2} more
                             </span>
                           )}
                         </div>
