@@ -9,6 +9,7 @@ import { Trophy, TrendingDown, RefreshCw, Download, Filter } from 'lucide-react'
 // [R19]: Record alert data structure (matches detector output)
 interface RecordAlert {
   property_id: string;
+  property_name?: string;
   domain: string;
   date: string;
   anomaly_type: string;
@@ -18,6 +19,7 @@ interface RecordAlert {
   dimension_value: string;
   metric: string;
   value: number;
+  current_value?: number;
   previous_record: number;
   decline?: number;
   increase?: number;
@@ -29,6 +31,7 @@ interface RecordAlert {
 
 interface RecordResults {
   generated_at: string;
+  timestamp?: string;
   detector_type: string;
   priority: string;
   properties_analyzed: number;

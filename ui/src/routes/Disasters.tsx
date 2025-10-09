@@ -9,6 +9,7 @@ import { AlertTriangle, RefreshCw, Download, TrendingDown } from 'lucide-react';
 // [R17]: Disaster alert data structure
 interface DisasterAlert {
   property_id: string;
+  property_name?: string;
   domain: string;
   date: string;
   disaster_type: 'zero_sessions' | 'zero_conversions' | 'traffic_drop';
@@ -20,8 +21,13 @@ interface DisasterAlert {
 
 interface DisasterResults {
   generated_at: string;
+  timestamp?: string;
   properties_analyzed: number;
   total_disasters: number;
+  summary?: {
+    total_properties_analyzed: number;
+    total_disasters: number;
+  };
   alerts: DisasterAlert[];
 }
 

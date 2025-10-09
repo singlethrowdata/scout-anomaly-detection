@@ -9,8 +9,10 @@ import { TrendingUp, TrendingDown, RefreshCw, Download, Filter } from 'lucide-re
 // [R20]: Trend alert data structure
 interface TrendAlert {
   property_id: string;
+  property_name?: string;
   domain: string;
   date: string;
+  detected_at?: string;
   dimension: 'overall' | 'geography' | 'device' | 'traffic_source';
   dimension_value: string;
   metric: string;
@@ -23,6 +25,7 @@ interface TrendAlert {
 
 interface TrendResults {
   generated_at: string;
+  timestamp?: string;
   properties_analyzed: number;
   total_trends: number;
   upward_trends: number;
